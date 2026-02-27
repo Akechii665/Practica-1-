@@ -1,0 +1,230 @@
+package D;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class ejercicio01 {
+
+    static Catalogo catalogo;
+    static Catalogoinsumo catalogoinsumo;
+
+    // ---------- MÉTODOS DE UTILERÍA (igual que en Práctica 1) ----------
+    public static String mostrarmenu(String[] opciones) {
+        String cadena = "";
+        for (String info : opciones)
+            cadena = cadena + info + "\n";
+        cadena = cadena + "Que opcion deseas";
+        return cadena;
+    }
+
+    public static String dialogo(String texto) throws IOException {
+        System.out.println(texto + " : ");
+        BufferedReader lectura = new BufferedReader(new InputStreamReader(System.in));
+        return lectura.readLine();
+    }
+
+    public static String desplegarMenu(String Titulo1, String[] menu) throws IOException {
+        System.out.println(Titulo1 + "\n");
+        return dialogo(mostrarmenu(menu));
+    }
+
+    // ---------- MÉTODOS DE INICIALIZACIÓN ----------
+    public static void CrearCatalogo() {
+        catalogo = new Catalogo(); // El constructor ya inicializa los ArrayLists
+        catalogoinsumo = new Catalogoinsumo();
+    }
+
+    // ---------- MÉTODOS DE NEGOCIO (Adaptados a ArrayList) ----------
+    public static void insertarinsumo(int segmento, Concepto nodo) {
+        switch (segmento) {
+            case 1: catalogo.materiales.add(nodo); break;
+            case 2: catalogo.manodeobra.add(nodo); break;
+            case 3: catalogo.maquinariayequipo.add(nodo); break;
+            case 4: catalogo.servicios.add(nodo); break;
+            default: System.out.println("Segmento no válido");
+        }
+        System.out.println("Insumo agregado correctamente.");
+    }
+
+    public static boolean existe(String codigo) {
+        for (Concepto nodo : catalogo.materiales)
+            if (nodo.codigo.compareTo(codigo) == 0) return true;
+        for (Concepto nodo : catalogo.manodeobra)
+            if (nodo.codigo.compareTo(codigo) == 0) return true;
+        for (Concepto nodo : catalogo.maquinariayequipo)
+            if (nodo.codigo.compareTo(codigo) == 0) return true;
+        for (Concepto nodo : catalogo.servicios)
+            if (nodo.codigo.compareTo(codigo) == 0) return true;
+        return false;
+    }
+
+    public static Concepto BuscarConcepto(String codigo) {
+        for (Concepto nodo : catalogo.materiales)
+            if (nodo.codigo.compareTo(codigo) == 0) return nodo;
+        for (Concepto nodo : catalogo.manodeobra)
+            if (nodo.codigo.compareTo(codigo) == 0) return nodo;
+        for (Concepto nodo : catalogo.maquinariayequipo)
+            if (nodo.codigo.compareTo(codigo) == 0) return nodo;
+        for (Concepto nodo : catalogo.servicios)
+            if (nodo.codigo.compareTo(codigo) == 0) return nodo;
+        return null;
+    }
+
+    public static String MostrarCatalogo(int segmento) {
+        String cadena = "\n========== C A T A L O G O ==========\n";
+        int index = 0;
+
+        if (segmento == 0 || segmento == 1) {
+            cadena += "--- MATERIALES ---\n";
+            for (Concepto nodo : catalogo.materiales) {
+                index++;
+                cadena += index + ". " + nodo.codigo + " - " + nodo.insumo + " - " + nodo.descripcion + " (" + nodo.unidadmedida + ")\n";
+            }
+        }
+        if (segmento == 0 || segmento == 2) {
+            cadena += "--- MANO DE OBRA ---\n";
+            for (Concepto nodo : catalogo.manodeobra) {
+                index++;
+                cadena += index + ". " + nodo.codigo + " - " + nodo.insumo + " - " + nodo.descripcion + " (" + nodo.unidadmedida + ")\n";
+            }
+        }
+        if (segmento == 0 || segmento == 3) {
+            cadena += "--- MAQUINARIA Y EQUIPO ---\n";
+            for (Concepto nodo : catalogo.maquinariayequipo) {
+                index++;
+                cadena += index + ". " + nodo.codigo + " - " + nodo.insumo + " - " + nodo.descripcion + " (" + nodo.unidadmedida + ")\n";
+            }
+        }
+        if (segmento == 0 || segmento == 4) {
+            cadena += "--- SERVICIOS ---\n";
+            for (Concepto nodo : catalogo.servicios) {
+                index++;
+                cadena += index + ". " + nodo.codigo + " - " + nodo.insumo + " - " + nodo.descripcion + " (" + nodo.unidadmedida + ")\n";
+            }
+        }
+        cadena += "\nTotal de conceptos mostrados: " + index + "\n";
+        return cadena;
+    }
+
+    public static void RemoverConceptos(String codigo) {
+        int pos;
+        // Buscar en materiales
+        for (int i = 0; i < catalogo.materiales.size(); i++) {
+            if (catalogo.materiales.get(i).codigo.equals(codigo)) {
+                catalogo.materiales.remove(i);
+                System.out.println("Concepto eliminado de Materiales.");
+                return;
+            }
+        }
+        // Buscar en manodeobra
+        for (int i = 0; i < catalogo.manodeobra.size(); i++) {
+            if (catalogo.manodeobra.get(i).codigo.equals(codigo)) {
+                catalogo.manodeobra.remove(i);
+                System.out.println("Concepto eliminado de Mano de Obra.");
+                return;
+            }
+        }
+        // Buscar en maquinaria
+        for (int i = 0; i < catalogo.maquinariayequipo.size(); i++) {
+            if (catalogo.maquinariayequipo.get(i).codigo.equals(codigo)) {
+                catalogo.maquinariayequipo.remove(i);
+                System.out.println("Concepto eliminado de Maquinaria y Equipo.");
+                return;
+            }
+        }
+        // Buscar en servicios
+        for (int i = 0; i < catalogo.servicios.size(); i++) {
+            if (catalogo.servicios.get(i).codigo.equals(codigo)) {
+                catalogo.servicios.remove(i);
+                System.out.println("Concepto eliminado de Servicios.");
+                return;
+            }
+        }
+        System.out.println("Código no encontrado para eliminar.");
+    }
+
+    // ---------- MÉTODOS DE MENÚS ----------
+    public static void AltasConceptos(int segmento, String nombreSegmento) throws IOException {
+        Concepto nodo = new Concepto();
+        System.out.println("\n--- Alta en " + nombreSegmento + " ---");
+        nodo.codigo = dialogo("Introduce el código del Concepto").trim();
+
+        if (!existe(nodo.codigo)) {
+            nodo.insumo = dialogo("Introduce el nombre del Concepto");
+            nodo.descripcion = dialogo("Introduce la descripción del Concepto");
+            nodo.unidadmedida = dialogo("Introduce la unidad del Concepto");
+            insertarinsumo(segmento, nodo);
+        } else {
+            System.out.println("ERROR: El código ya existe.");
+        }
+    }
+
+    public static void Altas() throws IOException {
+        String opcion;
+        String[] menu = {"1.-Materiales", "2.-Mano de Obra", "3.-Maquinaria y Equipo", "4.-Servicios", "6.-Salida"};
+        do {
+            opcion = desplegarMenu("\n=== ALTAS ===", menu).trim();
+            switch (opcion) {
+                case "1": AltasConceptos(1, "Materiales"); break;
+                case "2": AltasConceptos(2, "Mano de Obra"); break;
+                case "3": AltasConceptos(3, "Maquinaria y Equipo"); break;
+                case "4": AltasConceptos(4, "Servicios"); break;
+                case "6": System.out.println("Volviendo..."); break;
+                default: System.out.println("Opción inválida");
+            }
+        } while (!opcion.equals("6"));
+    }
+
+    public static void BajasConceptos() throws IOException {
+        System.out.println("\n--- BAJA DE CONCEPTO ---");
+        String codigo = dialogo("Introduce el código del Concepto a eliminar").trim();
+
+        if (existe(codigo)) {
+            Concepto nodo = BuscarConcepto(codigo);
+            String opcion = dialogo("¿Deseas eliminar '" + nodo.insumo + "'? [Y/N]").toUpperCase().trim();
+            if (opcion.equals("Y")) {
+                RemoverConceptos(codigo);
+            } else {
+                System.out.println("Eliminación cancelada.");
+            }
+        } else {
+            System.out.println("El código no existe.");
+        }
+    }
+
+    public static void Listado() throws IOException {
+        String opcion;
+        String[] menu = {"1.-Materiales", "2.-Mano de Obra", "3.-Maquinaria y Equipo", "4.-Servicios", "5.-Todos", "6.-Salida"};
+        do {
+            opcion = desplegarMenu("\n=== LISTADOS ===", menu).trim();
+            switch (opcion) {
+                case "1": System.out.println(MostrarCatalogo(1)); break;
+                case "2": System.out.println(MostrarCatalogo(2)); break;
+                case "3": System.out.println(MostrarCatalogo(3)); break;
+                case "4": System.out.println(MostrarCatalogo(4)); break;
+                case "5": System.out.println(MostrarCatalogo(0)); break;
+                case "6": System.out.println("Volviendo..."); break;
+                default: System.out.println("Opción inválida");
+            }
+        } while (!opcion.equals("6"));
+    }
+
+    // ---------- MÉTODO PRINCIPAL ----------
+    public static void main(String[] args) throws IOException {
+        CrearCatalogo();
+        String opcion;
+        String[] menuPrincipal = {"1.-Altas", "2.-Bajas", "3.-Listado", "6.-Salida"};
+
+        do {
+            opcion = desplegarMenu("\n=== SISTEMA DE CATÁLOGO (ArrayList) ===", menuPrincipal).trim();
+            switch (opcion) {
+                case "1": Altas(); break;
+                case "2": BajasConceptos(); break;
+                case "3": Listado(); break;
+                case "6": System.out.println("Saliendo... Hasta pronto!"); break;
+                default: System.out.println("Opción inválida");
+            }
+        } while (!opcion.equals("6"));
+    }
+}
