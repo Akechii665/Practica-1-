@@ -1,0 +1,370 @@
+package D;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+
+public class ejercicio01 {
+
+    // Variables globales (estáticas) del programa
+    static Catalogo catalogo;
+    static int tam; // Tamaño fijo de los arreglos
+
+    // ---------- MÉTODOS DE UTILERÍA (Interacción con el usuario) ----------
+    public static String mostrarmenu(String[] opciones) {
+        String cadena = "";
+        for (String info : opciones)
+            cadena = cadena + info + "\n";
+        cadena = cadena + "Que opcion deseas";
+        return cadena;
+    }
+
+    public static String dialogo(String texto) throws IOException {
+        String cadena;
+        System.out.println(texto + " : ");
+        BufferedReader lectura = new BufferedReader(new InputStreamReader(System.in));
+        cadena = lectura.readLine();
+        return cadena;
+    }
+
+    public static String desplegarMenu(String Titulo1, String[] menu) throws IOException {
+        System.out.println(Titulo1 + "\n");
+        String cadena = dialogo(mostrarmenu(menu));
+        return cadena;
+    }
+
+    // ---------- MÉTODOS DE NEGOCIO (Lógica del Catálogo) ----------
+    public static void CrearCatalogo() {
+        catalogo = new Catalogo();
+        // Inicializar los arreglos con el tamaño definido
+        catalogo.materiales = new Concepto[tam];
+        catalogo.manodeobra = new Concepto[tam];
+        catalogo.maquinariayequipo = new Concepto[tam];
+        catalogo.servicios = new Concepto[tam];
+        // Inicializar las posiciones (vacío)
+        catalogo.posmateriales = -1;
+        catalogo.posmanodeobra = -1;
+        catalogo.posmaquinariayequipo = -1;
+        catalogo.posservicios = -1;
+    }
+
+    public static void insertarinsumo(int segmento, Concepto nodo) {
+        switch (segmento) {
+            case 1: // materiales
+                if (catalogo.posmateriales < tam - 1) { // Verificar espacio
+                    catalogo.posmateriales++;
+                    catalogo.materiales[catalogo.posmateriales] = nodo;
+                    System.out.println("Material agregado.");
+                } else
+                    System.out.println("Catalogo de materiales esta lleno");
+                break;
+            case 2: // manodeobra
+                if (catalogo.posmanodeobra < tam - 1) {
+                    catalogo.posmanodeobra++;
+                    catalogo.manodeobra[catalogo.posmanodeobra] = nodo;
+                    System.out.println("Mano de Obra agregada.");
+                } else
+                    System.out.println("Catalogo de Mano de Obra esta lleno");
+                break;
+            case 3: // maquinariayequipo
+                if (catalogo.posmaquinariayequipo < tam - 1) {
+                    catalogo.posmaquinariayequipo++;
+                    catalogo.maquinariayequipo[catalogo.posmaquinariayequipo] = nodo;
+                    System.out.println("Maquinaria agregada.");
+                } else
+                    System.out.println("Catalogo de Maquinaria y Equipo esta lleno");
+                break;
+            case 4: // servicios
+                if (catalogo.posservicios < tam - 1) {
+                    catalogo.posservicios++;
+                    catalogo.servicios[catalogo.posservicios] = nodo;
+                    System.out.println("Servicio agregado.");
+                } else
+                    System.out.println("Catalogo de Servicios esta lleno");
+                break;
+            default:
+                System.out.println("Segmento no válido.");
+        }
+    }
+
+    public static int[] existe(String codigo) {
+        int[] enc = new int[] { -1, -1 }; // [segmento, posicion]
+        for (int pos = 0; pos <= catalogo.posmateriales; pos++) {
+            if (catalogo.materiales[pos] != null && catalogo.materiales[pos].codigo.compareTo(codigo) == 0) {
+                enc[0] = 1;
+                enc[1] = pos;
+                return enc;
+            }
+        }
+        for (int pos = 0; pos <= catalogo.posmanodeobra; pos++) {
+            if (catalogo.manodeobra[pos] != null && catalogo.manodeobra[pos].codigo.compareTo(codigo) == 0) {
+                enc[0] = 2;
+                enc[1] = pos;
+                return enc;
+            }
+        }
+        for (int pos = 0; pos <= catalogo.posmaquinariayequipo; pos++) {
+            if (catalogo.maquinariayequipo[pos] != null && catalogo.maquinariayequipo[pos].codigo.compareTo(codigo) == 0) {
+                enc[0] = 3;
+                enc[1] = pos;
+                return enc;
+            }
+        }
+        for (int pos = 0; pos <= catalogo.posservicios; pos++) {
+            if (catalogo.servicios[pos] != null && catalogo.servicios[pos].codigo.compareTo(codigo) == 0) {
+                enc[0] = 4;
+                enc[1] = pos;
+                return enc;
+            }
+        }
+        return enc; // Retorna [-1, -1] si no lo encuentra
+    }
+
+    public static Concepto BuscarConcepto(int segmento, String codigo) {
+        switch (segmento) {
+            case 1: // materiales
+                for (int pos = 0; pos <= catalogo.posmateriales; pos++)
+                    if (catalogo.materiales[pos] != null && catalogo.materiales[pos].codigo.compareTo(codigo) == 0)
+                        return catalogo.materiales[pos];
+                break;
+            case 2: // manodeobra
+                for (int pos = 0; pos <= catalogo.posmanodeobra; pos++)
+                    if (catalogo.manodeobra[pos] != null && catalogo.manodeobra[pos].codigo.compareTo(codigo) == 0)
+                        return catalogo.manodeobra[pos];
+                break;
+            case 3: // maquinariayequipo
+                for (int pos = 0; pos <= catalogo.posmaquinariayequipo; pos++)
+                    if (catalogo.maquinariayequipo[pos] != null && catalogo.maquinariayequipo[pos].codigo.compareTo(codigo) == 0)
+                        return catalogo.maquinariayequipo[pos];
+                break;
+            case 4: // servicios
+                for (int pos = 0; pos <= catalogo.posservicios; pos++)
+                    if (catalogo.servicios[pos] != null && catalogo.servicios[pos].codigo.compareTo(codigo) == 0)
+                        return catalogo.servicios[pos];
+                break;
+        }
+        return null;
+    }
+
+    public static String MostrarCatalogo(int segmento) {
+        String cadena = "\n========== C A T A L O G O ==========\n";
+        int index = 0;
+        if ((segmento == 0) || (segmento == 1)) {
+            cadena = cadena + "--- MATERIALES ---\n";
+            for (int pos = 0; pos <= catalogo.posmateriales; pos++) {
+                if (catalogo.materiales[pos] != null) {
+                    index++;
+                    Concepto c = catalogo.materiales[pos];
+                    cadena = cadena + index + ". " + c.codigo + " - " + c.insumo + " - " + c.descripcion + " (" + c.unidadmedida + ")\n";
+                }
+            }
+        }
+        if ((segmento == 0) || (segmento == 2)) {
+            cadena = cadena + "--- MANO DE OBRA ---\n";
+            for (int pos = 0; pos <= catalogo.posmanodeobra; pos++) {
+                 if (catalogo.manodeobra[pos] != null) {
+                    index++;
+                    Concepto c = catalogo.manodeobra[pos];
+                    cadena = cadena + index + ". " + c.codigo + " - " + c.insumo + " - " + c.descripcion + " (" + c.unidadmedida + ")\n";
+                }
+            }
+        }
+        if ((segmento == 0) || (segmento == 3)) {
+            cadena = cadena + "--- MAQUINARIA Y EQUIPO ---\n";
+            for (int pos = 0; pos <= catalogo.posmaquinariayequipo; pos++) {
+                if (catalogo.maquinariayequipo[pos] != null) {
+                    index++;
+                    Concepto c = catalogo.maquinariayequipo[pos];
+                    cadena = cadena + index + ". " + c.codigo + " - " + c.insumo + " - " + c.descripcion + " (" + c.unidadmedida + ")\n";
+                }
+            }
+        }
+        if ((segmento == 0) || (segmento == 4)) {
+            cadena = cadena + "--- SERVICIOS ---\n";
+            for (int pos = 0; pos <= catalogo.posservicios; pos++) {
+                if (catalogo.servicios[pos] != null) {
+                    index++;
+                    Concepto c = catalogo.servicios[pos];
+                    cadena = cadena + index + ". " + c.codigo + " - " + c.insumo + " - " + c.descripcion + " (" + c.unidadmedida + ")\n";
+                }
+            }
+        }
+        cadena = cadena + "\nTotal de conceptos mostrados: " + index + "\n";
+        return cadena;
+    }
+
+    public static void RemoverConceptos(int segmento, int pos) {
+        switch (segmento) {
+            case 1: // materiales
+                if (pos >= 0 && pos <= catalogo.posmateriales) {
+                    for (int i = pos; i < catalogo.posmateriales; i++) {
+                        catalogo.materiales[i] = catalogo.materiales[i + 1];
+                    }
+                    catalogo.materiales[catalogo.posmateriales] = null; // Limpiar última posición
+                    catalogo.posmateriales--;
+                    System.out.println("Material eliminado.");
+                }
+                break;
+            case 2: // manodeobra
+                if (pos >= 0 && pos <= catalogo.posmanodeobra) {
+                    for (int i = pos; i < catalogo.posmanodeobra; i++) {
+                        catalogo.manodeobra[i] = catalogo.manodeobra[i + 1];
+                    }
+                    catalogo.manodeobra[catalogo.posmanodeobra] = null;
+                    catalogo.posmanodeobra--;
+                    System.out.println("Mano de Obra eliminada.");
+                }
+                break;
+            case 3: // maquinariayequipo
+               if (pos >= 0 && pos <= catalogo.posmaquinariayequipo) {
+                    for (int i = pos; i < catalogo.posmaquinariayequipo; i++) {
+                        catalogo.maquinariayequipo[i] = catalogo.maquinariayequipo[i + 1];
+                    }
+                    catalogo.maquinariayequipo[catalogo.posmaquinariayequipo] = null;
+                    catalogo.posmaquinariayequipo--;
+                    System.out.println("Maquinaria eliminada.");
+                }
+                break;
+            case 4: // servicios
+                if (pos >= 0 && pos <= catalogo.posservicios) {
+                    for (int i = pos; i < catalogo.posservicios; i++) {
+                        catalogo.servicios[i] = catalogo.servicios[i + 1];
+                    }
+                    catalogo.servicios[catalogo.posservicios] = null;
+                    catalogo.posservicios--;
+                    System.out.println("Servicio eliminado.");
+                }
+                break;
+        }
+    }
+
+    // ---------- MÉTODOS DE LOS SUBMENÚS ----------
+    public static void AltasConceptos(int segmento, String segmentoStr) throws IOException {
+        Concepto nodo = new Concepto();
+        System.out.println("\n--- Alta en Segmento: " + segmentoStr + " ---");
+        nodo.codigo = dialogo("Introduce el codigo del Concepto").trim();
+        int[] encontrado = existe(nodo.codigo);
+
+        if (encontrado[0] == -1) {
+            nodo.insumo = dialogo("Introduce el nombre del Concepto");
+            nodo.descripcion = dialogo("Introduce la descripcion del Concepto");
+            nodo.unidadmedida = dialogo("Introduce la unidad del Concepto");
+            insertarinsumo(segmento, nodo);
+        } else {
+            System.out.println("ERROR: El codigo '" + nodo.codigo + "' ya existe en el catálogo.");
+        }
+    }
+
+    public static void Altas() throws IOException {
+        String opcion = "";
+        String[] datosmenu = { "1.-Materiales ", "2.-Mano de Obra ", "3.-Maquinaria y Equipo ", "4.-Servicios ", "6.-Salida" };
+        do {
+            opcion = desplegarMenu("\n=== Menu de Altas de Insumos ===", datosmenu).trim();
+            switch (opcion) {
+                case "1":
+                    AltasConceptos(1, "Materiales");
+                    break;
+                case "2":
+                    AltasConceptos(2, "Mano de Obra");
+                    break;
+                case "3":
+                    AltasConceptos(3, "Maquinaria y Equipo");
+                    break;
+                case "4":
+                    AltasConceptos(4, "Servicios");
+                    break;
+                case "6":
+                    System.out.println("Regresando al menu principal...");
+                    break;
+                default:
+                    System.out.println("Esta opcion no existe");
+                    break;
+            }
+        } while (!opcion.equals("6"));
+    }
+
+    public static void Bajas() throws IOException {
+        String codigo, opcion;
+        int[] encontrado;
+        System.out.println("\n--- Baja de Concepto ---");
+        codigo = dialogo("Introduce el codigo del Concepto a eliminar").trim();
+        encontrado = existe(codigo);
+
+        if (encontrado[0] > -1) {
+            Concepto nodo = BuscarConcepto(encontrado[0], codigo);
+            opcion = dialogo("Deseas eliminar a '" + nodo.insumo + "' [Y/N]").toUpperCase().trim();
+            if (opcion.equals("Y")) {
+                RemoverConceptos(encontrado[0], encontrado[1]);
+            } else {
+                System.out.println("Eliminación cancelada.");
+            }
+        } else {
+            System.out.println("El codigo '" + codigo + "' no existe. No se puede eliminar.");
+        }
+    }
+
+    public static void Listado() throws IOException {
+        String opcion = "";
+        String[] datosmenu = { "1.-Materiales ", "2.-Mano de Obra ", "3.-Maquinaria y Equipo ", "4.-Servicios ", "5.-Todos", "6.-Salida" };
+        do {
+            opcion = desplegarMenu("\n=== Menu de Listado de Insumos ===", datosmenu).trim();
+            switch (opcion) {
+                case "1":
+                    System.out.println(MostrarCatalogo(1));
+                    break;
+                case "2":
+                    System.out.println(MostrarCatalogo(2));
+                    break;
+                case "3":
+                    System.out.println(MostrarCatalogo(3));
+                    break;
+                case "4":
+                    System.out.println(MostrarCatalogo(4));
+                    break;
+                case "5":
+                    System.out.println(MostrarCatalogo(0));
+                    break;
+                case "6":
+                    System.out.println("Regresando al menu principal...");
+                    break;
+                default:
+                    System.out.println("Esta opcion no existe");
+                    break;
+            }
+        } while (!opcion.equals("6"));
+    }
+
+    // ---------- MÉTODO PRINCIPAL ----------
+    public static void main(String[] args) throws IOException {
+        String opcion = "";
+        String membrete = " S I S T E M A   D E   C A T A L O G O";
+        String[] datosmenu = { "1.-Altas", "2.-Bajas", "3.-Listado de Catalogo ", "6.-Salida" };
+
+        // Configuración inicial
+        tam = 100; // Definimos el tamaño máximo del catálogo
+        CrearCatalogo();
+
+        do {
+            opcion = desplegarMenu(membrete + "\n=== Menu Principal ===", datosmenu).trim();
+            switch (opcion) {
+                case "1":
+                    Altas();
+                    break;
+                case "2":
+                    Bajas();
+                    break;
+                case "3":
+                    Listado();
+                    break;
+                case "6":
+                    System.out.println("Saliendo del sistema... Hasta Pronto!");
+                    break;
+                default:
+                    System.out.println("Esta opcion no existe");
+                    break;
+            }
+        } while (!opcion.equals("6"));
+
+        System.exit(0);
+    }
+}
